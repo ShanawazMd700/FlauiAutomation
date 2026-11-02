@@ -103,15 +103,24 @@ public class ControlHelpers
     {
         var window = AutomationManager.MainWindow
             ?? throw new InvalidOperationException("Main window is not attached.");
+
         var endTime = DateTime.UtcNow.AddSeconds(timeout);
+
         while (DateTime.UtcNow < endTime)
         {
-            var element = window.FindFirstDescendant(
-                cf => cf.ByName(name, PropertyConditionFlags.MatchSubstring));
-            if (element != null) return element;
+            var element = window.FindAllDescendants()
+                .FirstOrDefault(e =>
+                    !string.IsNullOrEmpty(e.Name) &&
+                    e.Name.Contains(name, StringComparison.OrdinalIgnoreCase));
+
+            if (element != null)
+                return element;
+
             Thread.Sleep(250);
         }
-        throw new TimeoutException($"Element containing name '{name}' was not found.");
+
+        throw new TimeoutException(
+            $"Element containing name '{name}' was not found within {timeout} seconds.");
     }
 
     public static void MoveMouseToElement(AutomationElement element)

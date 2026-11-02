@@ -139,7 +139,7 @@ public class HomePage : ControlHelpers
                 }
                 catch (System.Runtime.InteropServices.COMException)
                 {
-                    // A window can close while inspecting the desktop tree.
+                    // A window can close while inspecting the desktop tree. Add exception handling to ignore such cases and continue searching other windows.
                 }
             }
 
